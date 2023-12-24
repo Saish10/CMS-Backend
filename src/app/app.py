@@ -7,7 +7,8 @@ from flask_bcrypt import Bcrypt
 from flask_admin import Admin
 from datetime import datetime
 from sqlalchemy.types import TypeDecorator, CHAR
-from .settings import DEBUG
+from .settings import DEBUG, LOG_DIR
+import os
 import logging
 
 class ULIDType(TypeDecorator):
@@ -49,6 +50,13 @@ swagger_api = Api(app,
 current_time = datetime.now()
 
 logger = logging.getLogger(__name__)
+if not os.path.exists(LOG_DIR):
+    os.mkdir(LOG_DIR)
+
+log_file = os.path.join(LOG_DIR, 'worklog.log')
+app_handler = logging.FileHandler(log_file)
+app_handler.setLevel(logging.DEBUG)
+logger.addHandler(app_handler)
 
 
 from api.urls import *

@@ -15,3 +15,6 @@ SQLALCHEMY_DATABASE_URI = "postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{NAME}".
 SQLALCHEMY_TRACK_MODIFICATIONS = bool(os.environ.get('SQLALCHEMY_TRACK_MODIFICATIONS'))
 FLASK_ADMIN_SWATCH = os.environ.get('FLASK_ADMIN_SWATCH')
 DEBUG = bool(os.environ.get('DEBUG'))
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+LOG_DIR = os.path.join(PROJECT_ROOT, 'logs')
