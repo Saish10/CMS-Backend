@@ -4,9 +4,10 @@ from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
-from flask_admin import Admin, AdminIndexView
+from flask_admin import Admin
 from datetime import datetime
 from sqlalchemy.types import TypeDecorator, CHAR
+from .settings import DEBUG
 import logging
 
 class ULIDType(TypeDecorator):
@@ -23,7 +24,7 @@ class ULIDType(TypeDecorator):
 url_prefix = '/worklog'
 app = Flask(__name__)
 app.config.from_pyfile('settings.py')
-
+app.debug = DEBUG
 bcrypt = Bcrypt(app)
 
 db = SQLAlchemy(app)
@@ -51,3 +52,4 @@ logger = logging.getLogger(__name__)
 
 
 from api.urls import *
+from db.admin import *
