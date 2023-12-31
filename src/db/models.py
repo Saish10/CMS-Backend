@@ -24,6 +24,9 @@ class User(BaseModel):
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
 
+    user_auth_tokens = db.relationship(
+        'AuthToken', backref='user', foreign_keys='AuthToken.user_id')
+
     def __repr__(self):
         return f"{self.__class__.__name__}: {self.username}"
 
@@ -48,5 +51,27 @@ class User(BaseModel):
     def get_user(cls, **criteria):
         return cls.query.filter_by(**criteria)
 
+
+class AuthToken(BaseModel):
+    __tablename__ = 'auth_token'
+
+    user_id = db.Column(ULIDType, db.ForeignKey('user.user_id'))
+    token = db.Column(db.Text(), nullable=True, index=True)
+
+    def __repr__(self):
+        return 'Auth Token for user {}'.format(self.user_id)
+    
+    @classmethod
+    def create_auth_token(cls, **data):
+        try:
+            token = cls(**data)
+            db.session.add(token)
+            db.session.flush()
+            logger.info(f"Token created successfully: {token.id}")
+            return True
+        except Exception as e:
+            logger.error(
+                f"AuthToken: Error in create_auth_token - {e}", exc_info=True)
+            return False
 
 

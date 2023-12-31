@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_admin import Admin
+from flask_jwt_extended import JWTManager
 from datetime import datetime
 from sqlalchemy.types import TypeDecorator, CHAR
 from .settings import DEBUG, LOG_DIR
@@ -27,6 +28,7 @@ app = Flask(__name__)
 app.config.from_pyfile('settings.py')
 app.debug = DEBUG
 bcrypt = Bcrypt(app)
+jwt = JWTManager(app)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db, compare_type=True)
@@ -40,6 +42,7 @@ swagger_api = Api(app,
                 title='WORKLOG',
                 description="WORKLOG API's",
                 doc=f'/',
+                security='Bearer',
                 authorizations={'Bearer': {'type': 'apiKey', 'in': 'header',
                                             'name': 'Authorization'}},
                 prefix=url_prefix,
@@ -47,7 +50,6 @@ swagger_api = Api(app,
                 default="API's",
                 )
 
-current_time = datetime.now()
 
 logger = logging.getLogger(__name__)
 if not os.path.exists(LOG_DIR):

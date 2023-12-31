@@ -18,3 +18,5 @@ DEBUG = bool(os.environ.get('DEBUG'))
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 LOG_DIR = os.path.join(PROJECT_ROOT, 'logs')
+
+TOKEN_EXPIRATION = os.environ.get('TOKEN_EXPIRATION')
