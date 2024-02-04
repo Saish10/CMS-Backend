@@ -26,9 +26,12 @@ class Country(BaseModel):
         return self.name
 
     @classmethod
-    def get_country(cls, **criteria):
+    def filter_country(cls, **criteria):
         return cls.objects.filter(**criteria)
 
+    @classmethod
+    def get_country(cls, **criteria):
+        return cls.objects.get(**criteria)
 
 
 
@@ -203,7 +206,16 @@ class UserAccount(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     @property
     def full_name(self):
-        return f"{self.first_name} {self.last_name}"
+        """
+        Get the full name of the user.
+
+        Returns:
+            str: The full name of the user.
+        """
+        first_name = self.first_name if self.first_name else ""
+        last_name = self.last_name if self.last_name else ""
+
+        return f"{first_name} {last_name}".strip()
 
     @classmethod
     def get_user(cls, **criteria):

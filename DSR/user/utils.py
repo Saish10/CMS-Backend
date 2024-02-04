@@ -37,10 +37,9 @@ class UserOnboarding:
 
             if UserAccount.filter_user(email=email).exists():
                 return False, "Email already registered"
-            
-            # country = Country.get_country(name=phone_details.get('country'))
-            phone = PhoneNumber.filter_phone_number(phone=phone_details.get('phone_number')).exists()
-            if phone:
+
+            country = Country.get_country(name=phone_details.get('country'))
+            if PhoneNumber.filter_phone_number(phone=phone_details.get('phone_number'), country=country).exists():
                 return False, "Phone number already registered."
 
             user = UserAccount.objects.create_user(email, password)

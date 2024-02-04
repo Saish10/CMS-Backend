@@ -63,6 +63,7 @@ class UserAccountManager(BaseUserManager):
                 raise ValueError('Superuser must have is_superuser=True.')
 
             user = self.create_user(email, password, **extra_fields)
+            user.first_name = "SuperUser"
             return user.save()
         except Exception as e:
             logger.error(f"UserAccountManager | Error in create_superuser {e}", exc_info=True)

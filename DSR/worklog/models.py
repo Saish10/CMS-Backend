@@ -18,6 +18,9 @@ class TaskType(BaseModel):
     name = models.CharField(_('type'), max_length=150)
     slug = models.SlugField(_('type slug'), max_length=150)
 
+    def __str__(self):
+        return f"TASK TYPE: {self.name}"
+
 
 class DailyStatusReport(models.Model):
 

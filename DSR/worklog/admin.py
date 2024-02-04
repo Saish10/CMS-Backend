@@ -7,7 +7,7 @@ class ProjectAdmin(admin.ModelAdmin):
     pass
 
 class TaskTypeAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('internal_id','name', 'slug', 'is_active', )
 
 class DailyStatusReportAdmin(admin.ModelAdmin):
     pass
