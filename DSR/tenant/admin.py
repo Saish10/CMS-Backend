@@ -3,11 +3,11 @@ from .models import *
 
 
 class TenantAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'is_active',)
+    list_display = ('name', 'slug', 'is_active', 'url')
 
 
 class TenantThemeAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('internal_id','primary_color', 'secondary_color', 'tertiary_color', 'tenant')
 
 
 class TenantConfigAdmin(admin.ModelAdmin):
