@@ -3,7 +3,7 @@ from .models import *
 
 
 class TenantAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'is_active', 'url')
+    list_display = ('internal_id','name', 'slug', 'is_active', 'url')
 
 
 class TenantThemeAdmin(admin.ModelAdmin):

@@ -6,10 +6,11 @@ from DSR.utils import api_response, logger
 from .utils import UserOnboarding
 from .serializers import RegisterSerializer
 
-@transaction.atomic
+
 class RegisterView(APIView):
     msg_header = 'Register User'
     @api_response
+    @transaction.atomic
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if not serializer.is_valid():

@@ -1,34 +1,10 @@
-from django.contrib.auth.models import (
-    BaseUserManager
-)
+
 from DSR.utils import logger
 from DSR.constants import ERROR_MSG
-from .models import *
+from .models import (
+    UserAccount, PhoneNumber, CompanyProfile, Branch, Role, Address, State,
+    Country)
 
-
-class UserAccountManager(BaseUserManager):
-
-    def create_user(self, email=None, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", False)
-        extra_fields.setdefault("is_superuser", False)
-        if not email:
-            raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
-
-        return self.create_user(email, password, **extra_fields)
 
 
 class UserOnboarding:
@@ -52,20 +28,33 @@ class UserOnboarding:
             result of the registration process.
         """
         try:
+
             email = data.get('email')
             password = data.get('password')
             company_details = data.get('company_details')
             phone_details = data.get('phone_details')
+            
 
-            if UserAccount.get_user(email=email).exists():
+            if UserAccount.filter_user(email=email).exists():
                 return False, "Email already registered"
-
-            if PhoneNumber.get_phone_number(phone=phone_details.get('phone_number'), isd_code=data.get('isd_code')).exists():
+            
+            # country = Country.get_country(name=phone_details.get('country'))
+            phone = PhoneNumber.filter_phone_number(phone=phone_details.get('phone_number')).exists()
+            if phone:
                 return False, "Phone number already registered."
 
-            user = UserAccountManager().create_user(email, password)
+            user = UserAccount.objects.create_user(email, password)
+            if not user:
+                return False, "Error creating user."
+
             user = self.create_user_profile(user, data)
+            if not user:
+                return False, "Error creating user profile."
+
             company_profile = self.create_company_profile(company_details)
+            if not company_profile:
+                return False, "Error creating company profile."
+
             user.company = company_profile
             user.save()
 
@@ -89,19 +78,42 @@ class UserOnboarding:
                 Company: The created or retrieved company object from the database.
             """
             company_id = company_details.get('company_id')
-            if company_id:
-                company = CompanyProfile.objects.get(internal_id=company_id)
-            else:
-                company_address = self.create_address(company_details.get('company_address'))
-                company_data = {
-                    "name": company_details.get('company_name'),
-                    "branch": company_details.get('branch'),
-                    "address": company_address
+            branch = self.create_branch(company_details.get('branch_details'))
+
+            company, created = CompanyProfile.objects.get_or_create(
+                internal_id=company_id,
+                defaults={
+                    "name": company_details.get('name'),
+                    "branch": branch
                 }
-                company = CompanyProfile.objects.create(**company_data)
+            )
+
             return company
         except Exception as e:
             logger.error(f'Error in create_company_profile :{e}', exc_info=True)
+            return None
+
+    def create_branch(self, data):
+        """
+        Create a branch object in the database.
+
+        Args:
+            data (dict): A dictionary containing the branch name and address data. The branch name is a string and the branch address is a dictionary with keys 'address_1', 'address_2', 'zip_code', 'state', and 'country'.
+
+        Returns:
+            branch (Branch): The created branch object in the database.
+        """
+        try:
+            branch_name = data.get('branch_name')
+            branch_address = self.create_address(data.get('branch_address'))
+
+            branch, created = Branch.objects.get_or_create(
+                branch_name=branch_name,
+                defaults={"branch_address": branch_address}
+            )
+            return branch
+        except Exception as e:
+            logger.error(f'Error in create_branch: {e}', exc_info=True)
             return None
 
     def create_user_profile(self, user, data):
@@ -121,10 +133,9 @@ class UserOnboarding:
             tenant = Tenant.objects.get(internal_id=data.get('tenant_id'), is_active=True)
 
             role = data.get('role')
-            if role is not None:
+            if role.get('role_id'):
                 role = Role.objects.get(
-                    internal_id=role.get('role_id'), slug=role.get('slug'),
-                    tenant=tenant, is_active=True)
+                    internal_id=role.get('role_id'), tenant=tenant, is_active=True)
             else:
                 role = Role.objects.create(
                     slug='owner', name='Owner', tenant=tenant)
@@ -142,7 +153,6 @@ class UserOnboarding:
             user.phone = phone
             user.tenant = tenant
             user.role = role
-            user.save()
             return user
         except Exception as e:
             logger.error(f'Error in create_user_profile :{e}',exc_info=True)
@@ -190,7 +200,7 @@ class UserOnboarding:
             country_name = phone_details.get('country')
             phone_number = phone_details.get('phone_number')
             country = Country.objects.get(name=country_name)
-            phone = PhoneNumber.objects.create(phone=phone_number, isd_code=country.isd_code, country=country)
+            phone = PhoneNumber.objects.create(phone=phone_number, country=country)
             return phone
         except Exception as e:
             logger.error(f'Error in create_phone :{e}',exc_info=True)

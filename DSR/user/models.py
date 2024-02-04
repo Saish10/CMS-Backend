@@ -3,9 +3,8 @@ from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin)
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from .utils import UserAccountManager
 from django.utils.text import slugify
-from DSR.utils import BaseModel, ULIDField
+from DSR.utils import BaseModel, ULIDField, UserAccountManager
 
 
 class Country(BaseModel):
@@ -23,12 +22,14 @@ class Country(BaseModel):
         verbose_name = 'Country'
         verbose_name_plural = 'Countries'
 
+    def __str__(self):
+        return self.name
+
     @classmethod
     def get_country(cls, **criteria):
         return cls.objects.filter(**criteria)
 
-    def __str__(self):
-        return self.name
+
 
 
 class State(BaseModel):
@@ -41,6 +42,9 @@ class State(BaseModel):
     class Meta:
         verbose_name = 'State'
         verbose_name_plural = 'States'
+
+    def __str__(self):
+        return self.name
 
     @classmethod
     def get_state(cls, **criteria):
@@ -56,6 +60,9 @@ class PhoneNumber(BaseModel):
     class Meta:
         verbose_name = 'Phone Number'
         verbose_name_plural = 'Phone Numbers'
+
+    def __str__(self):
+        return f"{self.country.isd_code} {self.phone}"
 
     @classmethod
     def get_phone_number(cls, **criteria):
@@ -80,6 +87,9 @@ class Address(BaseModel):
         verbose_name = 'Address'
         verbose_name_plural = 'Addresses'
 
+    def __str__(self):
+        return self.address_1
+
     @classmethod
     def get_address(cls, **criteria):
         return cls.objects.get(**criteria)
@@ -94,6 +104,7 @@ class Role(BaseModel):
     internal_id = ULIDField(_('role id'), editable=False)
     slug =  models.SlugField(_('role slug'), max_length=100, unique=True, db_index=True)
     name = models.CharField(_('role name'), max_length=100)
+    tenant = models.ForeignKey('tenant.Tenant', on_delete=models.CASCADE, null=True)
 
     class Meta:
         verbose_name = 'Role'
@@ -120,6 +131,10 @@ class Branch(BaseModel):
     class Meta:
         verbose_name = 'Branch'
         verbose_name_plural = 'Branches'
+
+    def __str__(self):
+        return self.branch_name
+
 
     @classmethod
     def get_branch(cls, **criteria):
@@ -211,10 +226,10 @@ class UserAccount(AbstractBaseUser, PermissionsMixin, BaseModel):
             str: The generated employee code for the user.
         """
         if self.company:
-            prefix = slugify(self.company.name).upper()
+            prefix = slugify(self.first_name).upper()
         else:
             prefix = "EMP"
-        unique_id = str(uuid.uuid4().int)[:8]
+        unique_id = str(uuid.uuid4().int)[:4]
         employee_code = f"{prefix}-{unique_id}"
         return employee_code
 

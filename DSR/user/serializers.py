@@ -1,6 +1,4 @@
 from rest_framework import serializers
-from .models import *
-
 
 class AddressSerializer(serializers.Serializer):
     address_1 = serializers.CharField()
@@ -11,31 +9,20 @@ class AddressSerializer(serializers.Serializer):
 
 class PhoneNumberSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
-    isd_code = serializers.CharField()
     country = serializers.CharField()
 
-class CountrySerializer(serializers.Serializer):
-    name = serializers.CharField()
-    isd_code = serializers.CharField()
-    alpha2 = serializers.CharField()
-    alpha3 = serializers.CharField()
-    currency = serializers.CharField()
-    currency_symbol = serializers.CharField()
-    currency_code = serializers.CharField()
-
-class StateSerializer(serializers.Serializer):
-    name = serializers.CharField()
-    country = CountrySerializer()
+class BranchDetailsSerializer(serializers.Serializer):
+    branch_name = serializers.CharField()
+    branch_address = AddressSerializer()
 
 class CompanySerializer(serializers.Serializer):
     name = serializers.CharField()
-    branch = serializers.CharField()
-    company_address = AddressSerializer()
+    branch_details = BranchDetailsSerializer()
 
 class RoleSerializer(serializers.Serializer):
-    internal_id = serializers.CharField(allow_null=True)
-    name = serializers.CharField()
-    slug = serializers.CharField()
+    role_id = serializers.CharField(allow_null=True, required=False)
+    slug = serializers.CharField(allow_null=True, required=False)
+    name = serializers.CharField(allow_null=True, required=False)
 
 class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -50,4 +37,4 @@ class RegisterSerializer(serializers.Serializer):
     joining_date = serializers.DateField()
     address = AddressSerializer()
     tenant_id = serializers.CharField()
-    role = RoleSerializer()
+    role = RoleSerializer(required=False)

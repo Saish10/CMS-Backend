@@ -12,11 +12,15 @@ class StateAdmin(admin.ModelAdmin):
 
 
 class PhoneNumberAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('isd_code', 'phone', 'country')
+
+    def isd_code(self, obj):
+        return obj.country.isd_code
+    isd_code.short_description = 'ISD Code'
 
 
 class RoleAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('internal_id','name', 'slug','tenant','is_active', )
 
 
 class BranchAdmin(admin.ModelAdmin):
@@ -24,11 +28,15 @@ class BranchAdmin(admin.ModelAdmin):
 
 
 class CompanyProfileAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'branch', 'branch_address')
+
+    def branch_address(self, obj):
+        return obj.branch.branch_address if obj.branch else '-'
+
 
 
 class UserAccountAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('full_name', 'email', 'employee_code', 'company', 'role', 'is_active')
 
 
 class InvitationAdmin(admin.ModelAdmin):
@@ -38,11 +46,15 @@ class InvitationAdmin(admin.ModelAdmin):
 class InvitationHistoryAdmin(admin.ModelAdmin):
     pass
 
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ('address_1', 'zip_code','city','state','country')
+
 
 admin.site.register(Country, CountryAdmin)
 admin.site.register(State, StateAdmin)
 admin.site.register(PhoneNumber, PhoneNumberAdmin)
 admin.site.register(Role, RoleAdmin)
+admin.site.register(Address, AddressAdmin)
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(CompanyProfile, CompanyProfileAdmin)
 admin.site.register(UserAccount, UserAccountAdmin)

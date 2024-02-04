@@ -6,6 +6,9 @@ import json
 from django.db import models
 from django.utils import timezone
 from ulid import new as ulid_new
+from django.contrib.auth.models import (
+    BaseUserManager
+)
 
 logger = logging.getLogger()
 
@@ -32,6 +35,38 @@ class BaseModel(models.Model):
     date_modified = models.DateTimeField(default=timezone.now, editable=True)
     created_by = models.CharField(max_length=500, blank=True)
     updated_by = models.CharField(max_length=500, blank=True)
+
+class UserAccountManager(BaseUserManager):
+
+    def create_user(self, email=None, password=None, **extra_fields):
+        try:
+            extra_fields.setdefault("is_staff", False)
+            extra_fields.setdefault("is_superuser", False)
+            if not email:
+                raise ValueError('The Email field must be set')
+            email = self.normalize_email(email)
+            user = self.model(email=email, **extra_fields)
+            user.set_password(password)
+            return user
+        except Exception as e:
+            logger.error(f"UserAccountManager | Error in create_user {e}", exc_info=True)
+            return None
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        try:
+            extra_fields.setdefault('is_staff', True)
+            extra_fields.setdefault('is_superuser', True)
+
+            if extra_fields.get('is_staff') is not True:
+                raise ValueError('Superuser must have is_staff=True.')
+            if extra_fields.get('is_superuser') is not True:
+                raise ValueError('Superuser must have is_superuser=True.')
+
+            user = self.create_user(email, password, **extra_fields)
+            return user.save()
+        except Exception as e:
+            logger.error(f"UserAccountManager | Error in create_superuser {e}", exc_info=True)
+            return None
 
 def api_response(api_function):
     @wraps(api_function)

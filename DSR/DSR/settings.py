@@ -146,8 +146,8 @@ ADMIN_REORDER = (
     {
         'app': 'user',
         'models': (
-                'user.UserAccount', 'user.Company', 'user.Role',
-                'user.Address', 'user.PhoneNumber',
+                'user.UserAccount', 'user.CompanyProfile', 'user.Role',
+                'user.Address', 'user.PhoneNumber','user.Branch',
                 'user.State', 'user.Country', 'user.Invitation',
                 'user.InvitationHistory',
                 )
