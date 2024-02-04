@@ -1,0 +1,326 @@
+[
+    {
+        "model": "user.state",
+        "pk": 1,
+        "fields": {
+            "name": "Andaman and Nicobar Islands",
+            "iso_code": "AN",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 2,
+        "fields": {
+            "name": "Andhra Pradesh",
+            "iso_code": "AP",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 3,
+        "fields": {
+            "name": "Arunachal Pradesh",
+            "iso_code": "AR",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 4,
+        "fields": {
+            "name": "Assam",
+            "iso_code": "AS",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 5,
+        "fields": {
+            "name": "Bihar",
+            "iso_code": "BR",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 6,
+        "fields": {
+            "name": "Chhattisgarh",
+            "iso_code": "CG",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 7,
+        "fields": {
+            "name": "Chandigarh",
+            "iso_code": "CH",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 8,
+        "fields": {
+            "name": "Dadra and Nagar Haveli",
+            "iso_code": "DN",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 9,
+        "fields": {
+            "name": "Daman and Diu",
+            "iso_code": "DD",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 10,
+        "fields": {
+            "name": "Delhi",
+            "iso_code": "DL",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 11,
+        "fields": {
+            "name": "Goa",
+            "iso_code": "GA",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 12,
+        "fields": {
+            "name": "Gujarat",
+            "iso_code": "GJ",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 13,
+        "fields": {
+            "name": "Haryana",
+            "iso_code": "HR",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 14,
+        "fields": {
+            "name": "Himachal Pradesh",
+            "iso_code": "HP",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 15,
+        "fields": {
+            "name": "Jharkhand",
+            "iso_code": "JH",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 16,
+        "fields": {
+            "name": "Karnataka",
+            "iso_code": "KA",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 17,
+        "fields": {
+            "name": "Kerala",
+            "iso_code": "KL",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 18,
+        "fields": {
+            "name": "Ladakh",
+            "iso_code": "LA",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 19,
+        "fields": {
+            "name": "Lakshadweep",
+            "iso_code": "LD",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 20,
+        "fields": {
+            "name": "Madhya Pradesh",
+            "iso_code": "MP",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 21,
+        "fields": {
+            "name": "Maharashtra",
+            "iso_code": "MH",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 22,
+        "fields": {
+            "name": "Manipur",
+            "iso_code": "MN",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 23,
+        "fields": {
+            "name": "Meghalaya",
+            "iso_code": "ML",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 24,
+        "fields": {
+            "name": "Mizoram",
+            "iso_code": "MZ",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 25,
+        "fields": {
+            "name": "Nagaland",
+            "iso_code": "NL",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 26,
+        "fields": {
+            "name": "Odisha",
+            "iso_code": "OD",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 27,
+        "fields": {
+            "name": "Punjab",
+            "iso_code": "PB",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 28,
+        "fields": {
+            "name": "Pondicherry",
+            "iso_code": "PY",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 29,
+        "fields": {
+            "name": "Rajasthan",
+            "iso_code": "RJ",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 30,
+        "fields": {
+            "name": "Sikkim",
+            "iso_code": "SK",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 31,
+        "fields": {
+            "name": "Tamil Nadu",
+            "iso_code": "TN",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 32,
+        "fields": {
+            "name": "Telangana",
+            "iso_code": "TS",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 33,
+        "fields": {
+            "name": "Tripura",
+            "iso_code": "TR",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 34,
+        "fields": {
+            "name": "Uttar Pradesh",
+            "iso_code": "UP",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 35,
+        "fields": {
+            "name": "Uttarakhand",
+            "iso_code": "UK",
+            "country": 1
+        }
+    },
+    {
+        "model": "user.state",
+        "pk": 36,
+        "fields": {
+            "name": "West Bengal",
+            "iso_code": "WB",
+            "country": 1
+        }
+    }
+]
