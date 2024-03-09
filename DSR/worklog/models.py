@@ -1,6 +1,7 @@
-from DSR.utils import BaseModel, ULIDField
+from DSR.utils import BaseModel, ULIDField, logger
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from DSR.constants import ERROR_MSG
 
 
 class Project(BaseModel):
@@ -35,3 +36,34 @@ class DailyStatusReport(models.Model):
 
     def __str__(self):
         return f"{self.user.full_name} - {self.task.name} - {self.date}"
+
+    @classmethod
+    def create(cls, data, user):
+        try:
+            date = data.get('date')
+            task_details = data.get('task_details')
+            status_summary = data.get('status_summary')
+            hours_worked = data.get('hours_worked')
+            task_type = data.get('task_type')
+            project = data.get('project')
+
+            task_type = TaskType.objects.get_or_create(slug=task_type)
+            project = Project.objects.get(name=project)
+
+            dsr_data = {
+                "date": date,
+                "task_details": task_details,
+                "status_summary": status_summary,
+                "hours_worked": hours_worked,
+                "task_type": task_type,
+                "project":project,
+                "user": user
+            }
+            dsr = cls.objects.create(**dsr_data)
+            if not dsr:
+                return False, "Failed to save Daily Status Report (DSR)."
+            return True, "Daily Status Report (DSR) saved successfully."
+        except Exception as e:
+            logger.error(
+                f'DailyStatusReport | Error in create :{e}', exc_info=True)
+            return False, ERROR_MSG
