@@ -63,6 +63,12 @@ MIDDLEWARE = [
     'admin_reorder.middleware.ModelAdminReorder',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
 ROOT_URLCONF = 'DSR.urls'
 
 TEMPLATES = [
