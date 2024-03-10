@@ -78,6 +78,7 @@ class Logout(APIView):
     permission_classes = [IsAuthenticated]
 
     # @method_decorator(csrf_exempt, name='dispatch')
+    @api_response
     def post(self, request):
         """
         Handles the POST request for logging out a user.

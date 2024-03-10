@@ -72,11 +72,12 @@ REST_FRAMEWORK = {
 }
 
 SWAGGER_SETTINGS = {
-   'SECURITY_DEFINITIONS': {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
     #   'Basic': {
     #         'type': 'basic'
     #   },
-      'Bearer': {
+        'Token': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
