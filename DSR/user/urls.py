@@ -9,3 +9,4 @@ urlpatterns = [
     # path('details/', RegisterView.as_view(), name='details'),
     # path('list/', RegisterView.as_view(), name='list'),
 ]
+

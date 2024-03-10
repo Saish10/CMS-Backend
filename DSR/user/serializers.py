@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from .models import *
 
 class AddressSerializer(serializers.Serializer):
     address_1 = serializers.CharField()
@@ -38,3 +39,40 @@ class RegisterSerializer(serializers.Serializer):
     address = AddressSerializer()
     tenant_id = serializers.CharField()
     role = RoleSerializer(required=False)
+
+
+
+class AddressDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = '__all__'
+
+class PhoneDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PhoneNumber
+        fields = '__all__'
+
+class RoleDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = '__all__'
+
+class CompanyProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyProfile
+        fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+    address = AddressDetailSerializer()
+    phone = PhoneDetailSerializer()
+    role = RoleDetailSerializer()
+    company = CompanyProfileSerializer()
+    class Meta:
+        model = UserAccount
+        fields = ('internal_id', 'email', 'first_name', 'last_name', 'dob',
+                  'employee_code', 'role', 'address', 'phone', 'company')
+
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from rest_framework.authtoken.models import Token
 from .models import *
 
 class CountryAdmin(admin.ModelAdmin):
@@ -50,6 +51,7 @@ class AddressAdmin(admin.ModelAdmin):
     list_display = ('address_1', 'zip_code','city','state','country')
 
 
+admin.site.register(Token)
 admin.site.register(Country, CountryAdmin)
 admin.site.register(State, StateAdmin)
 admin.site.register(PhoneNumber, PhoneNumberAdmin)

@@ -46,10 +46,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'rest_framework',
+    'rest_framework.authtoken',
     'admin_reorder',
     'user',
     'worklog',
     'tenant',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +69,19 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+}
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+    #   'Basic': {
+    #         'type': 'basic'
+    #   },
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
 }
 
 ROOT_URLCONF = 'DSR.urls'
@@ -148,7 +163,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ADMIN_REORDER = (
-    {'app': 'auth', 'models': ('auth.Group',)},
+    {'app': 'auth', 'models': ('auth.Group', 'authtoken.Token',)},
     {
         'app': 'user',
         'models': (

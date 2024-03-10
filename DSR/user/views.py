@@ -10,9 +10,11 @@ from .utils import (
     UserOnboarding
 )
 from .serializers import (
-    RegisterSerializer
+    RegisterSerializer, UserSerializer, UserLoginSerializer
 )
-
+from drf_yasg.utils import swagger_auto_schema
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 class RegisterView(APIView):
     msg_header = 'Register User'
@@ -45,6 +47,8 @@ class Login(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [AllowAny]
 
+
+    @swagger_auto_schema(request_body=UserLoginSerializer)
     @api_response
     def post(self, request):
         """
@@ -73,6 +77,7 @@ class Logout(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    # @method_decorator(csrf_exempt, name='dispatch')
     def post(self, request):
         """
         Handles the POST request for logging out a user.
@@ -80,5 +85,17 @@ class Logout(APIView):
         Returns a success message.
         """
         user = request.user
+        print(user)
         Token.objects.filter(user=user).delete()
         return 200, "success", "Logout successful", {}
+
+
+class UserDetails(APIView):
+    msg_header = "User Details"
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        data = UserSerializer(user)
+        return 200, "success", "User details retrieved successfully", data
