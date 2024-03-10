@@ -38,8 +38,8 @@ class RegisterView(APIView):
 
         is_success, message = UserOnboarding().register_user(serializer.validated_data)
         if not is_success:
-            return 400, "error", message, {}
-        return 200, "success", message, {}
+            return 400, message, {}
+        return 200, message, {}
 
 
 class Login(APIView):
@@ -69,7 +69,7 @@ class Login(APIView):
             'token': token.key,
             'user_id': user.internal_id
         }
-        return 200, "success", "Login successful", data
+        return 200, "Login successful", data
 
 
 class Logout(APIView):
@@ -86,9 +86,8 @@ class Logout(APIView):
         Returns a success message.
         """
         user = request.user
-        print(user)
         Token.objects.filter(user=user).delete()
-        return 200, "success", "Logout successful", {}
+        return 200, "Logout successful", {}
 
 
 class UserDetails(APIView):
@@ -96,7 +95,8 @@ class UserDetails(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @api_response
     def get(self, request):
         user = request.user
-        data = UserSerializer(user)
-        return 200, "success", "User details retrieved successfully", data
+        serializer = UserSerializer(user)
+        return 200, "User details retrieved successfully", serializer.data

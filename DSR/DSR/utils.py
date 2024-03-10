@@ -75,11 +75,11 @@ def api_response(api_function):
         msg_header = request.msg_header
         method_type = api_function.__name__.upper()
         try:
-            status_code, status, message, extra = api_function(request, *args, **kwargs)
-            return Utils().get_api_response(status_code, status, msg_header, message, extra)
+            status_code, message, extra = api_function(request, *args, **kwargs)
+            return Utils().get_api_response(status_code, msg_header, message, extra)
         except Exception as e:
             logger.error(f"{method_type} API | Error: {e}", exc_info=True)
-            return Utils().get_api_response(500, msg_header, str(e), 'error', None)
+            return Utils().get_api_response(500, str(e), msg_header, None)
 
     return wrapper
 
@@ -107,10 +107,10 @@ class Utils:
             logger.error(f'Utils | Error in getting user agent: {e}', exc_info=True)
 
 
-    def get_api_response(self, status_code, status, message_header, message, data=None):
+    def get_api_response(self, status_code, message_header, message, data=None):
         response = {
             "status_code": status_code,
-            "status": status,
+            # "status": status,
             "message_header": message_header,
             "message": message,
         }

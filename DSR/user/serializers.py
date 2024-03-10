@@ -40,27 +40,63 @@ class RegisterSerializer(serializers.Serializer):
     tenant_id = serializers.CharField()
     role = RoleSerializer(required=False)
 
+class CountrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Country
+        fields =('name', 'isd_code', 'alpha2', 'alpha3', 'currency',
+                 'currency_symbol', 'currency_code')
+
+
+class StateSerializer(serializers.ModelSerializer):
+    country = CountrySerializer()
+    class Meta:
+        model = State
+        fields = ('name', 'country')
 
 
 class AddressDetailSerializer(serializers.ModelSerializer):
+    state = serializers.SerializerMethodField()
+    country = serializers.SerializerMethodField()
     class Meta:
         model = Address
-        fields = '__all__'
+        fields = ('address_1', 'zip_code', 'city', 'state', 'country')
+
+    def get_country(self, obj):
+        return obj.country.name
+
+    def get_state(self, obj):
+        return obj.state.name
+
 
 class PhoneDetailSerializer(serializers.ModelSerializer):
+    isd_code = serializers.SerializerMethodField()
     class Meta:
         model = PhoneNumber
-        fields = '__all__'
+        fields = ('phone', 'isd_code')
+
+    def get_isd_code(self, obj):
+        return obj.country.isd_code
+
 
 class RoleDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = '__all__'
+        fields = ('internal_id', 'slug', 'name')
+
+class BranchSerializer(serializers.ModelSerializer):
+    branch_address = AddressDetailSerializer()
+    class Meta:
+        model = Branch
+        fields = ('branch_name', 'branch_address')
 
 class CompanyProfileSerializer(serializers.ModelSerializer):
+    branch = BranchSerializer()
     class Meta:
         model = CompanyProfile
-        fields = '__all__'
+        fields = ('name', 'branch')
+
+
+
 
 class UserSerializer(serializers.ModelSerializer):
     address = AddressDetailSerializer()

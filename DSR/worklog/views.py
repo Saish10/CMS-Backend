@@ -22,5 +22,5 @@ class DailyStatusReportView(APIView):
             DailyStatusReport.create(data.validated_data, request.user)
         )
         if not is_success:
-            return 400, "error", message, {}
-        return 200, "success", message, {}
+            return 400, message, {}
+        return 200, message, {}
