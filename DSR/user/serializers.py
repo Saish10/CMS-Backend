@@ -83,19 +83,19 @@ class RoleDetailSerializer(serializers.ModelSerializer):
         model = Role
         fields = ('internal_id', 'slug', 'name')
 
+
 class BranchSerializer(serializers.ModelSerializer):
     branch_address = AddressDetailSerializer()
     class Meta:
         model = Branch
         fields = ('branch_name', 'branch_address')
 
+
 class CompanyProfileSerializer(serializers.ModelSerializer):
     branch = BranchSerializer()
     class Meta:
         model = CompanyProfile
         fields = ('name', 'branch')
-
-
 
 
 class UserSerializer(serializers.ModelSerializer):

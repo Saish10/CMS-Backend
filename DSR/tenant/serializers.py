@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_yasg import openapi
 from .models import TenantTheme, Tenant
 
 class TenantThemeSerializer(serializers.ModelSerializer):
@@ -35,3 +36,16 @@ class TenantSerializer(serializers.ModelSerializer):
             return representation
 
         return super().to_representation(instance)
+
+
+
+""" PARAMETERS FOR GET API REQUESTS. """
+
+tenant_url=[
+    openapi.Parameter(
+        'tenant_url',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=True,
+    ),
+]

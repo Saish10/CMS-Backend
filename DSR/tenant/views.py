@@ -1,12 +1,18 @@
-from DSR.utils import api_response
-from rest_framework.generics import RetrieveAPIView
-from .models import Tenant
-from .serializers import TenantSerializer
 from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
+
+from DSR.utils import api_response
+from .models import (
+    Tenant
+)
+from .serializers import (
+    TenantSerializer, tenant_url
+)
 
 
 class TenantDetail(APIView):
     msg_header = 'Tenant Detail'
+    @swagger_auto_schema(manual_parameters=tenant_url)
     @api_response
     def get(self, request):
         tenant_url = request.query_params.get('tenant_url')
