@@ -260,8 +260,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin, BaseModel):
         employee_code = f"{prefix}-{unique_id}"
         return employee_code
 
-    def get_user_list(self, tenant):
-        return self.filter_user(tenant=tenant).all()
+
 
 class Invitation(BaseModel):
 

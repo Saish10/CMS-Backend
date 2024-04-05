@@ -5,25 +5,24 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.db import transaction
 from django.contrib.auth import authenticate
-from DSR.utils import api_response
-from .utils import (
-    UserOnboarding
-)
-from .serializers import (
-    RegisterSerializer, UserSerializer, UserLoginSerializer,
-    UserListSerializer
-)
-from .models import (
-    UserAccount
-)
 from drf_yasg.utils import swagger_auto_schema
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from DSR.utils import api_response
+
+from .utils import (
+    UserOnboarding, UserList
+)
+from .serializers import (
+    RegisterSchema, UserDetailSerializer, UserLoginSerializer,
+    UserListSerializer, UserQuerySerializer
+)
+
 
 class RegisterView(APIView):
     msg_header = 'Register User'
 
-    @swagger_auto_schema(request_body=RegisterSerializer)
+    @swagger_auto_schema(request_body=RegisterSchema)
     @api_response
     @transaction.atomic
     def post(self, request):
@@ -31,7 +30,7 @@ class RegisterView(APIView):
         Handles the POST request for user registration.
 
         """
-        serializer = RegisterSerializer(data=request.data)
+        serializer = RegisterSchema(data=request.data)
         if not serializer.is_valid():
             return 400, "error", serializer.errors, {}
 
@@ -45,7 +44,6 @@ class Login(APIView):
     msg_header = 'Login User'
     authentication_classes = [TokenAuthentication]
     permission_classes = [AllowAny]
-
 
     @swagger_auto_schema(request_body=UserLoginSerializer)
     @api_response
@@ -93,20 +91,21 @@ class UserDetails(APIView):
     @api_response
     def get(self, request):
         user = request.user
-        serializer = UserSerializer(user)
+        serializer = UserDetailSerializer(user)
         return 200, "User details retrieved successfully", serializer.data
 
 
-class UserList(APIView):
+class UserListView(APIView):
     msg_header = "User List"
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(query_serializer=UserQuerySerializer)
     @api_response
     def get(self, request):
         tenant = request.user.tenant
-        user_list = UserAccount.get_user_list(tenant)
+        user_list = UserList(request).get_user_list(tenant)
         if not user_list:
             return 200, "No Data Found", []
-        serializer = UserListSerializer(many=True)
+        serializer = UserListSerializer(user_list, many=True)
         return 200, "User details retrieved successfully", serializer.data

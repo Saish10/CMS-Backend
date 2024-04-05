@@ -4,7 +4,7 @@ from DSR.constants import ERROR_MSG
 from .models import (
     UserAccount, PhoneNumber, CompanyProfile, Branch, Role, Address, State,
     Country)
-
+from django.db.models import Q
 
 
 class UserOnboarding:
@@ -209,4 +209,87 @@ class UserOnboarding:
             return phone
         except Exception as e:
             logger.error(f'Error in create_phone :{e}',exc_info=True)
+            return None
+
+
+class UserList:
+    """
+    A class used to filter and search user accounts based on certain criteria
+
+    Args:
+        request (HttpRequest): The request object containing the GET parameters
+
+    Attributes:
+        role (str): The role parameter extracted from the request
+        name (str): The name parameter extracted from the request
+        employee_code (str): The employee code parameter extracted from the request
+        branch (str): The branch parameter extracted from the request
+        email (str): The email parameter extracted from the request
+    """
+
+    def __init__(self, request):
+        args = request.GET
+        self.role = args.get('role')
+        self.branch = args.get("branch")
+        self.search_params = args.get('q')
+
+    def search(self, queryset):
+        """
+        Filters the queryset based on the extracted email and employee code parameters
+
+        Args:
+            queryset (QuerySet): The queryset of UserAccount objects to filter
+
+        Returns:
+            QuerySet: The filtered queryset
+        """
+        try:
+            if self.search_params:
+                queryset = queryset.filter(
+                    Q(first_name__icontains=self.search_params) |
+                    Q(email__icontains=self.search_params) |
+                    Q(employee_code__icontains=self.search_params)
+                )
+            return queryset
+        except Exception as e:
+            logger.error(f'UserList | Error in search : {e}', exc_info=True)
+            return queryset
+
+    def filter(self, queryset):
+        """
+        Filters the queryset based on the extracted role and branch parameters
+
+        Args:
+            queryset (QuerySet): The queryset of UserAccount objects to filter
+
+        Returns:
+            QuerySet: The filtered queryset
+        """
+        try:
+            if self.role:
+                queryset = queryset.filter(role__slug=self.role)
+
+            if self.branch:
+                queryset = queryset.filter(branch__branch_name=self.branch)
+
+            return queryset
+        except Exception as e:
+            logger.error(f'UserList | Error in filter : {e}', exc_info=True)
+            return queryset
+
+    def get_user_list(self, tenant):
+        """
+        Retrieves the list of users based on the extracted parameters and the specified tenant
+
+        Args:
+            tenant (Tenant): The tenant object to filter the users by
+
+        Returns:
+            QuerySet: The filtered queryset of UserAccount objects
+        """
+        try:
+            queryset = UserAccount.objects.filter(tenant=tenant)
+            return self.search(self.filter(queryset)) if queryset else None
+        except Exception as e:
+            logger.error(f'UserList | Error in filter : {e}', exc_info=True)
             return None

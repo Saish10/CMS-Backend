@@ -30,7 +30,7 @@ class RoleSerializer(serializers.Serializer):
     slug = serializers.CharField(allow_null=True, required=False)
     name = serializers.CharField(allow_null=True, required=False)
 
-class RegisterSerializer(serializers.Serializer):
+class RegisterSchema(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
     company_details = CompanySerializer()
@@ -104,7 +104,7 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
         fields = ('name', 'registration_number')
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserDetailSerializer(serializers.ModelSerializer):
     address = AddressDetailSerializer()
     phone = PhoneDetailSerializer()
     role = RoleDetailSerializer()
@@ -121,11 +121,29 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Set default values for the fields if they are not provided
+        self.fields['email'].default = 'sn.saishnaik@gmail.com'
+        self.fields['password'].default = 'dsr@123'
+
 
 class UserListSerializer(serializers.ModelSerializer):
     branch = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
     class Meta:
         model = UserAccount
         fields = ('full_name', 'email', 'employee_code', 'role', 'branch')
 
+    
+    def get_branch(self, obj):
+        return obj.branch.branch_name
+    
+    def get_role(self, obj):
+        return obj.role.name
 
+
+class UserQuerySerializer(serializers.Serializer):
+    role = serializers.CharField(required=False)
+    branch = serializers.CharField(required=False)
+    q=serializers.CharField(required=False)

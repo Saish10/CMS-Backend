@@ -6,8 +6,6 @@ urlpatterns = [
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),
     path('details/', UserDetails.as_view(), name='details'),
-    # Todo
-    
-    # path('list/', RegisterView.as_view(), name='list'),
+    path('list/', UserListView.as_view(), name='list'),
 ]
 
