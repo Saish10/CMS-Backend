@@ -10,7 +10,11 @@ from .utils import (
     UserOnboarding
 )
 from .serializers import (
-    RegisterSerializer, UserSerializer, UserLoginSerializer
+    RegisterSerializer, UserSerializer, UserLoginSerializer,
+    UserListSerializer
+)
+from .models import (
+    UserAccount
 )
 from drf_yasg.utils import swagger_auto_schema
 from django.views.decorators.csrf import csrf_exempt
@@ -19,18 +23,13 @@ from django.utils.decorators import method_decorator
 class RegisterView(APIView):
     msg_header = 'Register User'
 
+    @swagger_auto_schema(request_body=RegisterSerializer)
     @api_response
     @transaction.atomic
     def post(self, request):
         """
         Handles the POST request for user registration.
 
-        Validates the incoming data using the `RegisterSerializer` and calls
-        the `register_user` method of the `UserOnboarding` class to perform the
-        registration process.
-
-        Returns a success message if the registration is successful, or an
-        error message if there are any validation errors or registration fails.
         """
         serializer = RegisterSerializer(data=request.data)
         if not serializer.is_valid():
@@ -53,16 +52,14 @@ class Login(APIView):
     def post(self, request):
         """
         Handles the POST request to the login endpoint.
-        Authenticates the user with the provided email and password,
-        generates a token for the user if authentication is successful,
-        and returns the token and user ID in the response.
+
         """
         email = request.data.get('email')
         password = request.data.get('password')
 
         user = authenticate(request, email=email, password=password)
         if not user:
-            return 401, "error", "Invalid credentials", {}
+            return 401, "Invalid credentials", {}
 
         token, _ = Token.objects.get_or_create(user=user)
         data = {
@@ -82,8 +79,6 @@ class Logout(APIView):
     def post(self, request):
         """
         Handles the POST request for logging out a user.
-        Deletes the token associated with the user from the database.
-        Returns a success message.
         """
         user = request.user
         Token.objects.filter(user=user).delete()
@@ -99,4 +94,19 @@ class UserDetails(APIView):
     def get(self, request):
         user = request.user
         serializer = UserSerializer(user)
+        return 200, "User details retrieved successfully", serializer.data
+
+
+class UserList(APIView):
+    msg_header = "User List"
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @api_response
+    def get(self, request):
+        tenant = request.user.tenant
+        user_list = UserAccount.get_user_list(tenant)
+        if not user_list:
+            return 200, "No Data Found", []
+        serializer = UserListSerializer(many=True)
         return 200, "User details retrieved successfully", serializer.data

@@ -37,9 +37,9 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/user/', include('user.urls')),
-    path('api/tenant/', include('tenant.urls')),
-    path('api/worklog/', include('worklog.urls')),
+    path('api/user/', include(('user.urls', 'user'), namespace='User & Auth')),
+    path('api/tenant/', include(('tenant.urls', 'tenant'), namespace='Tenant')),
+    path('api/worklog/', include(('worklog.urls', 'worklog'), namespace='Worklog')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
 ]

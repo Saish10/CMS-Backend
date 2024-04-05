@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from drf_yasg import openapi
 
 class AddressSerializer(serializers.Serializer):
     address_1 = serializers.CharField()
@@ -18,7 +19,11 @@ class BranchDetailsSerializer(serializers.Serializer):
 
 class CompanySerializer(serializers.Serializer):
     name = serializers.CharField()
-    branch_details = BranchDetailsSerializer()
+    registration_number = serializers.CharField()
+    company_type = serializers.CharField()
+    company_email = serializers.EmailField()
+    company_phone = serializers.CharField()
+    incorporation_date = serializers.DateField()
 
 class RoleSerializer(serializers.Serializer):
     role_id = serializers.CharField(allow_null=True, required=False)
@@ -29,6 +34,7 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
     company_details = CompanySerializer()
+    branch_details = BranchDetailsSerializer()
     phone_details = PhoneNumberSerializer()
     first_name = serializers.CharField()
     last_name = serializers.CharField()
@@ -92,10 +98,10 @@ class BranchSerializer(serializers.ModelSerializer):
 
 
 class CompanyProfileSerializer(serializers.ModelSerializer):
-    branch = BranchSerializer()
+
     class Meta:
         model = CompanyProfile
-        fields = ('name', 'branch')
+        fields = ('name', 'registration_number')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -103,12 +109,23 @@ class UserSerializer(serializers.ModelSerializer):
     phone = PhoneDetailSerializer()
     role = RoleDetailSerializer()
     company = CompanyProfileSerializer()
+    branch = BranchSerializer()
     class Meta:
         model = UserAccount
         fields = ('internal_id', 'email', 'first_name', 'last_name', 'dob',
-                  'employee_code', 'role', 'address', 'phone', 'company')
+                  'employee_code', 'role', 'address', 'phone', 'company',
+                  'branch')
 
 
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    branch = serializers.SerializerMethodField()
+    class Meta:
+        model = UserAccount
+        fields = ('full_name', 'email', 'employee_code', 'role', 'branch')
+
+

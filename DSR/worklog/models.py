@@ -2,6 +2,7 @@ from DSR.utils import BaseModel, ULIDField, logger
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from DSR.constants import ERROR_MSG
+from tenant.models import Tenant
 
 
 class Project(BaseModel):
@@ -9,9 +10,28 @@ class Project(BaseModel):
     internal_id = ULIDField(_('project ulid'), editable=False)
     name = models.CharField(_('project name'), max_length=100)
     description = models.TextField()
+    assigned_users = models.ManyToManyField(
+        'user.UserAccount',
+        verbose_name=_('assigned users'),
+        related_name='assigned_projects',
+        blank=True,
+    )
+    tenant = models.ForeignKey(
+        'tenant.Tenant',
+        on_delete=models.CASCADE,
+        null=True,
+        )
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def filter_project(cls, **criteria):
+        return cls.objects.filter(**criteria)
+
+    def get_project_list(self, tenant):
+        return self.filter_project(tenant=tenant).all()
+
 
 class TaskType(BaseModel):
 
@@ -21,6 +41,13 @@ class TaskType(BaseModel):
 
     def __str__(self):
         return f"TASK TYPE: {self.name}"
+
+    @classmethod
+    def filter_task_type(cls, **criteria):
+        return cls.objects.filter(**criteria)
+
+    def get_task_type_list(self):
+        return self.filter_task_type(is_active=True).all()
 
 
 class DailyStatusReport(models.Model):

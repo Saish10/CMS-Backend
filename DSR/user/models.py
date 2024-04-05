@@ -34,7 +34,6 @@ class Country(BaseModel):
         return cls.objects.get(**criteria)
 
 
-
 class State(BaseModel):
 
     internal_id = ULIDField(_('state uuid'), editable = False)
@@ -152,7 +151,12 @@ class CompanyProfile(BaseModel):
 
     internal_id = ULIDField(_('company id'), editable=False)
     name = models.CharField(_('company name'), max_length=100)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, related_name='company')
+    registration_number = models.CharField(_('company registration'), null=True)
+    company_type = models.CharField(_('company type'), null=True)
+    company_email = models.CharField(_('company email'), null=True)
+    company_phone = models.CharField(_('company phone'), null=True)
+    incorporation_date = models.DateField(default=timezone.now, editable=False)
+    # branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, related_name='company')
 
     class Meta:
         verbose_name = 'Company Profile'
@@ -186,11 +190,22 @@ class UserAccount(AbstractBaseUser, PermissionsMixin, BaseModel):
     dob = models.DateTimeField(_('date of birth'), auto_now_add=True)
     employee_code = models.CharField(_('employee code'), max_length=50)
     joining_date = models.DateField(_('joining date'), auto_now=True)
-    address = models.ForeignKey(Address ,on_delete=models.CASCADE, null=True)
-    phone = models.ForeignKey(PhoneNumber ,on_delete=models.CASCADE, null=True)
+    address = models.ForeignKey(
+        Address, on_delete=models.CASCADE, null=True
+    )
+    phone = models.ForeignKey(
+        PhoneNumber, on_delete=models.CASCADE, null=True
+    )
     role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True)
-    company = models.ForeignKey(CompanyProfile, on_delete=models.CASCADE, null=True)
-    tenant = models.ForeignKey('tenant.Tenant', on_delete=models.CASCADE, null=True)
+    company = models.ForeignKey(
+        CompanyProfile, on_delete=models.CASCADE, null=True
+    )
+    branch = models.ForeignKey(
+        Branch, on_delete=models.CASCADE, null=True, related_name="users_branch"
+    )
+    tenant = models.ForeignKey(
+        "tenant.Tenant", on_delete=models.CASCADE, null=True
+    )
     is_staff = models.BooleanField(_("is staff"), default=False)
     objects = UserAccountManager()
 
@@ -245,6 +260,8 @@ class UserAccount(AbstractBaseUser, PermissionsMixin, BaseModel):
         employee_code = f"{prefix}-{unique_id}"
         return employee_code
 
+    def get_user_list(self, tenant):
+        return self.filter_user(tenant=tenant).all()
 
 class Invitation(BaseModel):
 

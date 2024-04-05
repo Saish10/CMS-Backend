@@ -63,7 +63,7 @@ class UserOnboarding:
                 f"UserOnBoarding | Error in register_user : {e}", exc_info=True)
             return False, ERROR_MSG
 
-    def create_company_profile(self, company_details):
+    def create_company_profile(self, data):
         try:
             """
             Create a company profile in the database.
@@ -76,14 +76,18 @@ class UserOnboarding:
             Returns:
                 Company: The created or retrieved company object from the database.
             """
-            company_id = company_details.get('company_id')
-            branch = self.create_branch(company_details.get('branch_details'))
+            company_id = data.get('company_id')
+            # branch = self.create_branch(company_details.get('branch_details'))
 
             company, created = CompanyProfile.objects.get_or_create(
                 internal_id=company_id,
                 defaults={
-                    "name": company_details.get('name'),
-                    "branch": branch
+                    "name": data.get('name'),
+                    "registration_number": data.get('registration_number'),
+                    "company_type": data.get('company_type'),
+                    "company_email": data.get('company_email'),
+                    "company_phone": data.get('company_phone'),
+                    "incorporation_date": data.get('incorporation_date')
                 }
             )
 
@@ -103,11 +107,11 @@ class UserOnboarding:
             branch (Branch): The created branch object in the database.
         """
         try:
-            branch_name = data.get('branch_name')
+            branch_id = data.get('branch_id')
             branch_address = self.create_address(data.get('branch_address'))
 
             branch, created = Branch.objects.get_or_create(
-                branch_name=branch_name,
+                internal_id=branch_id,
                 defaults={"branch_address": branch_address}
             )
             return branch
@@ -141,6 +145,7 @@ class UserOnboarding:
 
             phone = self.create_phone(data.get('phone_details'))
             user_address = self.create_address(data.get('address'))
+            branch = self.create_branch(data.get('branch_details'))
 
             user.first_name = data.get('first_name')
             user.last_name = data.get('last_name')
@@ -152,6 +157,7 @@ class UserOnboarding:
             user.phone = phone
             user.tenant = tenant
             user.role = role
+            user.branch = branch
             return user
         except Exception as e:
             logger.error(f'Error in create_user_profile :{e}',exc_info=True)

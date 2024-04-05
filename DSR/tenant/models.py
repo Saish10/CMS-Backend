@@ -12,7 +12,7 @@ class Tenant(BaseModel):
 
 
     def __str__(self):
-        return f'Tenant: {self.name}'
+        return self.name
 
     @classmethod
     def get_tenant(cls, **criteria):

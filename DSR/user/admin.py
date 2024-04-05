@@ -29,7 +29,7 @@ class BranchAdmin(admin.ModelAdmin):
 
 
 class CompanyProfileAdmin(admin.ModelAdmin):
-    list_display = ('name', 'branch', 'branch_address')
+    list_display = ('name', 'company_email','registration_number')
 
     def branch_address(self, obj):
         return obj.branch.branch_address if obj.branch else '-'
