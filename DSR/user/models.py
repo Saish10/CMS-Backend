@@ -90,7 +90,7 @@ class Address(BaseModel):
         verbose_name_plural = 'Addresses'
 
     def __str__(self):
-        return self.address_1
+        return f"{self.address_1}"
 
     @classmethod
     def get_address(cls, **criteria):
