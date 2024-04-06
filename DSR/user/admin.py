@@ -36,7 +36,9 @@ class BranchAdmin(admin.ModelAdmin):
 
 
 class CompanyProfileAdmin(admin.ModelAdmin):
-    list_display = ('name', 'company_email','registration_number')
+    list_display = (
+        'internal_id', 'name', 'company_email','registration_number'
+    )
 
 
 

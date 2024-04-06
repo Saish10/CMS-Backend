@@ -1,5 +1,6 @@
 from functools import wraps
 from rest_framework import status
+from rest_framework import serializers
 import logging
 from django.http import JsonResponse
 import json
@@ -118,3 +119,24 @@ class Utils:
             response["data"] = data
 
         return JsonResponse(response)
+
+
+class OnlyFieldsMixin:
+    def __init__(self, *args, **kwargs):
+        only_fields = kwargs.pop('only', None)
+        super().__init__(*args, **kwargs)
+        if only_fields:
+            self.fields = {
+                field: self.fields[field]
+                for field in only_fields
+            }
+
+class ModelSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        only_fields = kwargs.pop('only', None)
+        super().__init__(*args, **kwargs)
+        if only_fields:
+            self.fields = {
+                field: self.fields[field]
+                for field in only_fields
+            }

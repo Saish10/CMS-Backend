@@ -11,11 +11,12 @@ from django.utils.decorators import method_decorator
 from DSR.utils import api_response
 
 from .utils import (
-    UserOnboarding, UserList
+    BranchList, UserOnboarding, UserList
 )
 from .serializers import (
-    RegisterSchema, UserDetailSerializer, UserLoginSerializer,
-    UserListSerializer, UserQuerySerializer
+    BranchSerializer, RegisterSchema, UserDetailSerializer, UserLoginSerializer,
+    UserListSerializer, UserQuerySerializer,
+    branch_list_param
 )
 
 
@@ -109,3 +110,21 @@ class UserListView(APIView):
             return 200, "No Data Found", []
         serializer = UserListSerializer(user_list, many=True)
         return 200, "User details retrieved successfully", serializer.data
+
+
+class BranchListView(APIView):
+    msg_header = "Branch List"
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(manual_parameters=branch_list_param)
+    @api_response
+    def get(self, request):
+        branch_list = BranchList(request).get_branch_list()
+        if not branch_list:
+            return 200, "No Data Found", []
+
+        serializer = BranchSerializer(
+            branch_list, many=True, only=['branch_name']
+        )
+        return 200, "Branch list retrieved successfully", serializer.data

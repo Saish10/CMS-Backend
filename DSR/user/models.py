@@ -106,7 +106,10 @@ class Role(BaseModel):
     internal_id = ULIDField(_('role id'), editable=False)
     slug =  models.SlugField(_('role slug'), max_length=100, unique=True, db_index=True)
     name = models.CharField(_('role name'), max_length=100)
-    tenant = models.ForeignKey('tenant.Tenant', on_delete=models.CASCADE, null=True)
+    tenant = models.ForeignKey(
+        'tenant.Tenant', on_delete=models.CASCADE, null=True,
+        related_name='tenant_roles'
+    )
 
     class Meta:
         verbose_name = 'Role'
@@ -129,6 +132,12 @@ class Branch(BaseModel):
     internal_id = ULIDField(_('branch id'), editable=False)
     branch_name = models.CharField(_('branch name'), max_length=100)
     branch_address = models.ForeignKey(Address, on_delete=models.CASCADE, null=True)
+    company = models.ForeignKey(
+        'user.CompanyProfile',
+        on_delete=models.PROTECT,
+        related_name='company_branches',
+        null=True
+    )
 
     class Meta:
         verbose_name = 'Branch'
@@ -196,15 +205,21 @@ class UserAccount(AbstractBaseUser, PermissionsMixin, BaseModel):
     phone = models.ForeignKey(
         PhoneNumber, on_delete=models.CASCADE, null=True
     )
-    role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True)
+    role = models.ForeignKey(
+        Role, on_delete=models.CASCADE, null=True,
+        related_name='role_users'
+    )
     company = models.ForeignKey(
-        CompanyProfile, on_delete=models.CASCADE, null=True
+        CompanyProfile, on_delete=models.CASCADE, null=True,
+        related_name='company_users'
     )
     branch = models.ForeignKey(
-        Branch, on_delete=models.CASCADE, null=True, related_name="users_branch"
+        Branch, on_delete=models.CASCADE, null=True,
+        related_name="branch_users"
     )
     tenant = models.ForeignKey(
-        "tenant.Tenant", on_delete=models.CASCADE, null=True
+        "tenant.Tenant", on_delete=models.CASCADE, null=True,
+        related_name='tenant_users'
     )
     is_staff = models.BooleanField(_("is staff"), default=False)
     objects = UserAccountManager()

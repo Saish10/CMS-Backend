@@ -1,4 +1,3 @@
-
 from DSR.utils import logger
 from DSR.constants import ERROR_MSG
 from .models import (
@@ -292,4 +291,24 @@ class UserList:
             return self.search(self.filter(queryset)) if queryset else None
         except Exception as e:
             logger.error(f'UserList | Error in filter : {e}', exc_info=True)
+            return None
+
+
+class BranchList:
+
+    def __init__(self, request):
+        args = request.GET
+        self.company_id = args.get("company_id")
+
+    def get_branch_list(self):
+        try:
+            company = (
+                CompanyProfile.objects.filter(
+                    internal_id=self.company_id, is_active=True
+                ).last()
+            )
+            branches = company.company_branches.all()
+            return branches
+        except Exception as e:
+            logger.error(f"BranchList | Error in get_branch_list : {e}", exc_info=True)
             return None

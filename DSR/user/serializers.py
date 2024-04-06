@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from DSR.utils import ModelSerializer
 from drf_yasg import openapi
 
 class AddressSerializer(serializers.Serializer):
@@ -46,21 +47,21 @@ class RegisterSchema(serializers.Serializer):
     tenant_id = serializers.CharField()
     role = RoleSerializer(required=False)
 
-class CountrySerializer(serializers.ModelSerializer):
+class CountrySerializer(ModelSerializer):
     class Meta:
         model = Country
         fields =('name', 'isd_code', 'alpha2', 'alpha3', 'currency',
                  'currency_symbol', 'currency_code')
 
 
-class StateSerializer(serializers.ModelSerializer):
+class StateSerializer(ModelSerializer):
     country = CountrySerializer()
     class Meta:
         model = State
         fields = ('name', 'country')
 
 
-class AddressDetailSerializer(serializers.ModelSerializer):
+class AddressDetailSerializer(ModelSerializer):
     state = serializers.SerializerMethodField()
     country = serializers.SerializerMethodField()
     class Meta:
@@ -74,7 +75,7 @@ class AddressDetailSerializer(serializers.ModelSerializer):
         return obj.state.name
 
 
-class PhoneDetailSerializer(serializers.ModelSerializer):
+class PhoneDetailSerializer(ModelSerializer):
     isd_code = serializers.SerializerMethodField()
     class Meta:
         model = PhoneNumber
@@ -84,27 +85,28 @@ class PhoneDetailSerializer(serializers.ModelSerializer):
         return obj.country.isd_code
 
 
-class RoleDetailSerializer(serializers.ModelSerializer):
+class RoleDetailSerializer(ModelSerializer):
     class Meta:
         model = Role
         fields = ('internal_id', 'slug', 'name')
 
 
-class BranchSerializer(serializers.ModelSerializer):
+class BranchSerializer(ModelSerializer):
     branch_address = AddressDetailSerializer()
     class Meta:
         model = Branch
         fields = ('branch_name', 'branch_address')
 
 
-class CompanyProfileSerializer(serializers.ModelSerializer):
+
+class CompanyProfileSerializer(ModelSerializer):
 
     class Meta:
         model = CompanyProfile
         fields = ('name', 'registration_number')
 
 
-class UserDetailSerializer(serializers.ModelSerializer):
+class UserDetailSerializer(ModelSerializer):
     address = AddressDetailSerializer()
     phone = PhoneDetailSerializer()
     role = RoleDetailSerializer()
@@ -128,7 +130,7 @@ class UserLoginSerializer(serializers.Serializer):
         self.fields['password'].default = 'dsr@123'
 
 
-class UserListSerializer(serializers.ModelSerializer):
+class UserListSerializer(ModelSerializer):
     branch = serializers.SerializerMethodField()
     role = serializers.SerializerMethodField()
     class Meta:
@@ -147,3 +149,19 @@ class UserQuerySerializer(serializers.Serializer):
     role = serializers.CharField(required=False)
     branch = serializers.CharField(required=False)
     q=serializers.CharField(required=False)
+
+
+
+
+
+
+""" PARAMETERS FOR GET API REQUESTS. """
+
+branch_list_param=[
+    openapi.Parameter(
+        'company_id',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=True,
+    ),
+]
