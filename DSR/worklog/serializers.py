@@ -1,7 +1,7 @@
 from rest_framework import serializers
-
-from .models import Project, TaskType
-
+from DSR.utils import ModelSerializer
+from .models import Project, TaskType, DailyStatusReport
+from drf_yasg import openapi
 
 class StatusReportSerializer(serializers.Serializer):
     date = serializers.DateField()
@@ -22,3 +22,36 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = '__all__'
+
+
+class DSRListSerializer(ModelSerializer):
+    project = serializers.SerializerMethodField()
+    task_type = serializers.SerializerMethodField()
+    class Meta:
+        model = DailyStatusReport
+        fields = ('internal_id', 'date', 'project', 'task_details',
+                  'hours_worked', 'task_type')
+
+    def get_task_type(self, obj):
+        return obj.task_type.name
+
+    def get_project(self, obj):
+        return obj.project.name
+
+class DSRQuerySerializer(serializers.Serializer):
+    date = serializers.DateField(required=False)
+    month_year = serializers.CharField(required=False)
+    project = serializers.CharField(required=False)
+
+
+
+""" PARAMETERS FOR GET API REQUESTS. """
+
+dsr_detail_param=[
+    openapi.Parameter(
+        'internal_id',
+        openapi.IN_QUERY,
+        type=openapi.TYPE_STRING,
+        required=True,
+    ),
+]

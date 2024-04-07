@@ -3,10 +3,14 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from DSR.utils import api_response
+from drf_yasg.utils import swagger_auto_schema
 from .models import DailyStatusReport, TaskType, Project
 from .serializers import (
-    StatusReportSerializer, TaskTypeSerializer, ProjectSerializer
+    DSRQuerySerializer, StatusReportSerializer, TaskTypeSerializer, ProjectSerializer,
+    DSRListSerializer,
+    dsr_detail_param
 )
+from .manager import DSRManager
 
 
 class DailyStatusReportView(APIView):
@@ -21,7 +25,7 @@ class DailyStatusReportView(APIView):
             return 400, "error", data.errors, {}
 
         is_success, message = (
-            DailyStatusReport.create(data.validated_data, request.user)
+            DSRManager(request).create(data.validated_data, request.user)
         )
         if not is_success:
             return 400, message, {}
@@ -55,3 +59,33 @@ class ProjectsView(APIView):
             return 200, "Projects not found", {}
         serializer = ProjectSerializer(queryset, many=True)
         return 200, "Project list retrieved successfully.", serializer.data
+
+
+class DSRListView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    msg_header = 'DSR List'
+
+    @swagger_auto_schema(query_serializer=DSRQuerySerializer)
+    @api_response
+    def get(self, request):
+        user = request.user
+        queryset = DSRManager(request).get_daily_status_report(user)
+        if not queryset:
+            return 404, "No DSR status reports found", {}
+        serializer = DSRListSerializer(queryset, many=True)
+        return 200, "DSR list retrieved successfully.", serializer.data
+
+class DSRDetailView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    msg_header = 'DSR Detail'
+
+    @swagger_auto_schema(manual_parameters=dsr_detail_param)
+    @api_response
+    def get(self, request):
+        detail = DSRManager(request).get_dsr_detail()
+        if not detail:
+            return 404, "No DSR detail found", {}
+        serializer = StatusReportSerializer(detail)
+        return 200, "DSR detail retrieved successfully.", serializer.data

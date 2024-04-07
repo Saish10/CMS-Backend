@@ -23,8 +23,10 @@ class TaskTypeAdmin(admin.ModelAdmin):
     list_display = ('internal_id','name', 'slug', 'is_active', )
 
 class DailyStatusReportAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'date', 'task_details', 'task_type',
-                    'hours_worked', 'project', )
+    list_display = (
+        'internal_id','full_name', 'date', 'task_details',
+        'task_type', 'hours_worked', 'project',
+    )
     list_filter = ('project',)
     search_fields = ('user__first_name','user__last_name')
 
