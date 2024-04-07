@@ -24,7 +24,7 @@ class TaskTypeAdmin(admin.ModelAdmin):
 
 class DailyStatusReportAdmin(admin.ModelAdmin):
     list_display = (
-        'internal_id','full_name', 'date', 'task_details',
+        'internal_id','full_name', 'date', 'task',
         'task_type', 'hours_worked', 'project',
     )
     list_filter = ('project',)

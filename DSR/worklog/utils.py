@@ -87,29 +87,30 @@ class DSRManager:
             )
             return None
 
-    def update_dsr(self, updates):
+    def update(self, updates, user):
         try:
-            # Retrieve the DailyStatusReport object
-            dsr = DailyStatusReport.objects.get(internal_id=self.dsr_id)
 
-            # Perform updates based on the provided dictionary
+            dsr = DailyStatusReport.objects.get(internal_id=updates.get('internal_id'))
+            task_type = TaskType.objects.get(slug=updates.get('task_type'))
+            project = Project.objects.get(name=updates.get('project'))
+            updates['user'] = user
+            updates['task_type'] = task_type
+            updates['project'] = project
+
+            updated_fields = {}
             for field, value in updates.items():
-                if hasattr(dsr, field):
+                if hasattr(dsr, field) and getattr(dsr, field) != value:
                     setattr(dsr, field, value)
-                else:
-                    logger.warning(
-                        f"DSRManager | Attribute {field} does not exist in DailyStatusReport object."
-                    )
+                    updated_fields[field] = value
+                elif not hasattr(dsr, field):
+                    logger.warning(f"DSRManager | Attribute {field} does not exist.")
 
-            # Save the updated DailyStatusReport object
             dsr.save()
-
-            return dsr  # Return the updated object
-        except DailyStatusReport.DoesNotExist:
-            logger.error(
-                f"DSRManager | DailyStatusReport with internal_id={self.dsr_id} does not exist."
+            return (
+                True, "DSR updated successfully." if updated_fields else True,
+                "No fields were updated."
             )
-            return None
+
         except Exception as e:
             logger.error(f"DSRManager | Error in update_dsr :{e}", exc_info=True)
-            return None
+            return None, ERROR_MSG

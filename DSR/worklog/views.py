@@ -4,25 +4,27 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from DSR.utils import api_response
 from drf_yasg.utils import swagger_auto_schema
-from .models import DailyStatusReport, TaskType, Project
+from .models import TaskType, Project
 from .serializers import (
     DSRQuerySerializer, StatusReportSerializer, TaskTypeSerializer, ProjectSerializer,
     DSRListSerializer,
     dsr_detail_param
 )
-from .manager import DSRManager
+from .utils import DSRManager
 
 
 class DailyStatusReportView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     msg_header = 'DSR'
+
+    @swagger_auto_schema(request_body=StatusReportSerializer)
     @api_response
     @transaction.atomic
     def post(self, request):
         data = StatusReportSerializer(data=request.data)
         if not data.is_valid():
-            return 400, "error", data.errors, {}
+            return 400, data.errors, {}
 
         is_success, message = (
             DSRManager(request).create(data.validated_data, request.user)
@@ -30,6 +32,22 @@ class DailyStatusReportView(APIView):
         if not is_success:
             return 400, message, {}
         return 200, message, {}
+
+    @swagger_auto_schema(request_body=StatusReportSerializer)
+    @api_response
+    @transaction.atomic
+    def put(self, request):
+        data = StatusReportSerializer(data=request.data)
+        if not data.is_valid():
+            return 400, data.errors, {}
+
+        is_success, message = (
+            DSRManager(request).update(data.validated_data, request.user)
+        )
+        if not is_success:
+            return 400, message, {}
+        return 200, message, {}
+
 
 
 class TaskCategoryView(APIView):

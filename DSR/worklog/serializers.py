@@ -4,8 +4,9 @@ from .models import Project, TaskType, DailyStatusReport
 from drf_yasg import openapi
 
 class StatusReportSerializer(serializers.Serializer):
+    internal_id = serializers.CharField(required=False)
     date = serializers.DateField()
-    task_details = serializers.CharField()
+    task = serializers.CharField()
     status_summary = serializers.CharField()
     hours_worked = serializers.DecimalField(max_digits=5, decimal_places=2)
     task_type = serializers.CharField()
@@ -29,8 +30,10 @@ class DSRListSerializer(ModelSerializer):
     task_type = serializers.SerializerMethodField()
     class Meta:
         model = DailyStatusReport
-        fields = ('internal_id', 'date', 'project', 'task_details',
-                  'hours_worked', 'task_type')
+        fields = (
+            'internal_id', 'date', 'project', 'task', 'hours_worked',
+            'task_type'
+        )
 
     def get_task_type(self, obj):
         return obj.task_type.name

@@ -54,7 +54,7 @@ class DailyStatusReport(BaseModel):
 
     internal_id = ULIDField(_('dsr ulid'), editable=False)
     date = models.DateField(_('date'))
-    task_details = models.TextField(_('task details'))
+    task = models.TextField(_('task'), null=True)
     status_summary = models.TextField(_('status summary'))
     hours_worked = models.DecimalField(_('hours worked'), max_digits=5, decimal_places=2)
     task_type = models.ForeignKey(TaskType, on_delete=models.SET_NULL, null=True)
