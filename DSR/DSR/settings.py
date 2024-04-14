@@ -52,7 +52,10 @@ INSTALLED_APPS = [
     'worklog',
     'tenant',
     'drf_yasg',
+    'colorfield'
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -163,7 +166,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CONSTANCE_SUPERUSER_ONLY = True
 ADMIN_REORDER = (
+    {'app': 'constance', 'models':('constance.Config',)},
     {'app': 'auth', 'models': ('auth.Group', 'authtoken.Token',)},
     {
         'app': 'user',
@@ -190,3 +195,23 @@ ADMIN_REORDER = (
 )
 
 SHELL_PLUS = "ipython"
+
+# Celery Configuration Options
+CELERY_TIMEZONE = os.environ.get('CELERY_TIMEZONE')
+CELERY_TASK_TRACK_STARTED = os.environ.get('CELERY_TASK_TRACK_STARTED')
+CELERY_TASK_TIME_LIMIT = os.environ.get('CELERY_TASK_TIME_LIMIT')
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+
+MAIL_SERVER = os.environ.get('MAIL_SERVER')
+MAIL_PORT = os.environ.get('MAIL_PORT')
+MAIL_FROM = os.environ.get('MAIL_FROM')
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+MAIL_USE_TLS = bool(os.environ.get('MAIL_USE_TLS'))
+MAIL_USE_SSL = bool(os.environ.get('MAIL_USE_SSL'))
+MAIL_DEFAULT_SENDER = (MAIL_FROM, MAIL_USERNAME)
+
+STATIC_ROOT = 'DSR/static/colorfield'
