@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   db:
     container_name: worklog_db
     image: postgres:latest
@@ -15,5 +14,12 @@ services:
       - postgres_data:/var/lib/postgresql/data
     env_file: .env
 
+  redis:
+    container_name: worklog_redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
 volumes:
   postgres_data:
+
